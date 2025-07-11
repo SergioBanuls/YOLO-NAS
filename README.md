@@ -2,6 +2,12 @@
 
 Este repositorio contiene dos aplicaciones principales para trabajar con el modelo YOLO-NAS, desde la preparación de datos hasta el entrenamiento y predicción del modelo.
 
+## 📊 Dataset
+
+Los datos de entrenamiento utilizados en este proyecto provienen del dataset **MIDV-2020** ([midv](http://l3i-share.univ-lr.fr/MIDV2020/midv2020.html)), que contiene imágenes de documentos de identidad.
+
+> ⚠️ **Importante**: Este repositorio no incluye los datos de entrenamiento. Es necesario descargar el dataset MIDV-2020 por cuenta propia desde el enlace oficial para poder realizar el entrenamiento del modelo.
+
 ## 📁 Estructura del Repositorio
 
 ```
