@@ -46,6 +46,8 @@ YOLO-NAS/
 - Realizar predicciones sobre datos nuevos
 - Fine-tuning de modelos pre-entrenados
 
+📖 [Ver documentación completa de trainYoloNas](./trainYoloNas/README.md)
+
 ## 🚀 Flujo de Trabajo Recomendado
 
 1. **Preparación de datos** (`imageScript/`):
