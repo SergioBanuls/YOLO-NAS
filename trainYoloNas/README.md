@@ -317,20 +317,5 @@ python predict.py
 | ❌ **Error de checkpoint** | Usar ruta absoluta en `predict.py` |
 | ❌ **Dependencias faltantes** | Reinstalar con conda/pip según instrucciones |
 
-### 📞 Soporte
-
-Si encuentras problemas:
-1. 📖 Revisa este README paso a paso
-2. 🔍 Verifica que todos los archivos estén en su lugar
-3. ⚙️ Confirma que el entorno conda esté activado
-4. 📝 Comprueba los logs de error en la terminal
 
 ---
-
-<div align="center">
-
-### 🎉 ¡Listo para Detectar Documentos de Identidad!
-
-**Desarrollado con ❤️ para detección de objetos con YOLO-NAS**
-
-</div>
