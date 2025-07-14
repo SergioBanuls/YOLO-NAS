@@ -4,6 +4,16 @@ imageScript/labels/
 imageScript/newLabels/
 imageScript/annotations.json
 
+# Ignore images and labels in training dataset but keep folder structure
+trainYoloNas/id_dataset/images/train/*
+trainYoloNas/id_dataset/images/val/*
+trainYoloNas/id_dataset/labels/train/*
+trainYoloNas/id_dataset/labels/val/*
+!trainYoloNas/id_dataset/images/train/.gitkeep
+!trainYoloNas/id_dataset/images/val/.gitkeep
+!trainYoloNas/id_dataset/labels/train/.gitkeep
+!trainYoloNas/id_dataset/labels/val/.gitkeep
+
 # Python cache files
 __pycache__/
 *.py[cod]

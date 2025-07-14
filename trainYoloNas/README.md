@@ -216,24 +216,42 @@ Una vez entrenado el modelo, utiliza el script `predict.py` para realizar detecc
 
 ### ⚙️ Configuración de Parámetros
 
-Antes de ejecutar la inferencia, configura estos **3 parámetros críticos**:
+Antes de ejecutar la inferencia, **debes modificar manualmente** las siguientes variables en el archivo `predict.py`:
 
-#### 📁 1. Ruta del Checkpoint
+#### 🔧 Parámetros Obligatorios a Configurar
+
+> ⚠️ **IMPORTANTE**: Estas rutas deben ser configuradas antes de ejecutar el script.
+
+##### 📁 1. RUTA_CHECKPOINT
 ```python
-# Ejemplo en predict.py
-MODEL_PATH = "/absolute/path/to/best_model.pth"
+# En predict.py - línea 8
+RUTA_CHECKPOINT = '/ruta/completa/al/mejor/modelo/checkpoint.pth'
+
+# Ejemplo:
+RUTA_CHECKPOINT = '/Users/user/Documents/YOLO-NAS/trainYoloNas/runs/train/exp/weights/best.pth'
 ```
 
-#### 🏷️ 2. Número de Clases
+##### 🖼️ 2. RUTA_IMAGEN
+```python
+# En predict.py - línea 11
+RUTA_IMAGEN = '/ruta/completa/a/imagen/de/prueba.jpg'
+
+# Ejemplo:
+RUTA_IMAGEN = '/Users/user/Documents/YOLO-NAS/imageScript/images/00.jpg'
+```
+
+#### 📋 Parámetros Adicionales de Configuración
+
+##### 🏷️ 3. Número de Clases
 ```python
 # ⚠️ DEBE coincidir con el entrenamiento
-NUM_CLASSES = 2
+NUM_CLASES = 2
 ```
 
-#### 🎯 3. Umbral de Confianza
+##### 🎯 4. Umbral de Confianza
 ```python
 # Valor entre 0.0 y 1.0
-CONFIDENCE_THRESHOLD = 0.2  # Empezar con valor bajo para testing
+CONF_THRESHOLD = 0.6  # Ajustar según necesidades
 ```
 
 ### 📋 Tabla de Configuración
@@ -246,17 +264,29 @@ CONFIDENCE_THRESHOLD = 0.2  # Empezar con valor bajo para testing
 
 ### ▶️ Ejecutar Predicción
 
+> 🚨 **ANTES DE EJECUTAR**: Asegúrate de haber configurado las rutas en `predict.py`
+
 ```bash
-# Activar el entorno
+# 1. Activar el entorno
 conda activate yolo-nas
 
-# Navegar al directorio
+# 2. Navegar al directorio
 cd /path/to/trainYoloNas
 
-# Configurar predict.py con los parámetros correctos
-# Luego ejecutar:
+# 3. OBLIGATORIO: Editar predict.py y configurar:
+#    - RUTA_CHECKPOINT (ruta al modelo entrenado)
+#    - RUTA_IMAGEN (ruta a la imagen de prueba)
+
+# 4. Ejecutar predicción
 python predict.py
 ```
+
+#### ✅ Checklist Previo a la Ejecución
+
+- [ ] ✅ `RUTA_CHECKPOINT` configurada con la ruta completa al modelo
+- [ ] ✅ `RUTA_IMAGEN` configurada con la ruta completa a la imagen de prueba
+- [ ] ✅ `NUM_CLASES` coincide con el entrenamiento (2 en este caso)
+- [ ] ✅ `CONF_THRESHOLD` ajustado según necesidades
 
 ### 🖼️ Resultado Esperado
 
@@ -316,6 +346,87 @@ python predict.py
 | ❌ **Error de clases** | Verificar `nc` en `data.yaml` |
 | ❌ **Error de checkpoint** | Usar ruta absoluta en `predict.py` |
 | ❌ **Dependencias faltantes** | Reinstalar con conda/pip según instrucciones |
+| ❌ **Error URLError: getaddrinfo failed** | Ver solución detallada abajo ⬇️ |
 
+---
+
+## 🔧 Solución al Error de Carga de Pesos Pre-entrenados
+
+### ❌ Error: `URLError: <urlopen error [Errno 11001] getaddrinfo failed>`
+
+Si encuentras este error al intentar cargar los pesos pre-entrenados (`pretrained_weights="coco"`) para YOLO-NAS, es debido a un cambio en la URL donde se alojan estos pesos. La versión actual de SuperGradients puede estar apuntando a una ubicación antigua.
+
+#### 🔍 Pasos para la Solución
+
+##### 1️⃣ Localizar la Instalación de SuperGradients
+
+Encuentra la carpeta donde está instalada la librería `super_gradients`. Una ruta común es:
+
+```bash
+# Windows
+C:\Users\tu_usuario\miniconda3\envs\yolo-nas\lib\site-packages\super_gradients\
+
+# macOS/Linux
+/Users/tu_usuario/miniconda3/envs/yolo-nas/lib/python3.10/site-packages/super_gradients/
+```
+
+> 💡 **Tip**: Puedes encontrar la ruta exacta ejecutando:
+> ```python
+> import super_gradients
+> print(super_gradients.__file__)
+> ```
+
+##### 2️⃣ Modificar `pretrained_models.py`
+
+**Archivo**: `.../super_gradients/training/pretrained_models.py`
+
+1. Abre el archivo con un editor de texto
+2. Busca todas las ocurrencias de: `sghub.deci.ai`
+3. Reemplázalas por: `sg-hub-nv.s3.amazonaws.com`
+
+```python
+# ❌ URL antigua (buscar)
+"https://sghub.deci.ai/models/..."
+
+# ✅ URL nueva (reemplazar)
+"https://sg-hub-nv.s3.amazonaws.com/models/..."
+```
+
+##### 3️⃣ Modificar `checkpoint_utils.py`
+
+**Archivo**: `.../super_gradients/training/utils/checkpoint_utils.py`
+
+1. Abre el archivo con un editor de texto
+2. Busca la línea con `unique_filename`
+3. Corrige la URL en esa línea
+
+```python
+# ❌ Línea antigua (buscar)
+unique_filename = url.split("https://sghub.deci.ai/models/")[1].replace("/", "_").replace(" ", "_")
+
+# ✅ Línea nueva (reemplazar)
+unique_filename = url.split("https://sg-hub-nv.s3.amazonaws.com/models/")[1].replace("/", "_").replace(" ", "_")
+```
+
+#### ⚠️ Consideraciones Importantes
+
+> 🔒 **Permisos**: Necesitarás permisos de administrador para guardar los cambios.
+
+> 💾 **Backup**: Haz una copia de seguridad de los archivos antes de modificarlos:
+> ```bash
+> cp pretrained_models.py pretrained_models.py.backup
+> cp checkpoint_utils.py checkpoint_utils.py.backup
+> ```
+
+> 🔄 **Actualizaciones**: Este problema es específico de ciertas versiones. En futuras actualizaciones de SuperGradients, el arreglo puede estar incluido.
+
+#### ✅ Verificación
+
+Después de realizar los cambios:
+
+1. Guarda ambos archivos
+2. Reinicia tu entorno Python
+3. Vuelve a ejecutar tu script de entrenamiento
+4. El modelo debería descargar los pesos pre-entrenados correctamente
 
 ---

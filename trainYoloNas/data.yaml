@@ -1,0 +1,5 @@
+train: id_dataset/images/train
+val: id_dataset/images/val
+
+nc: 2 # Number of classes
+names: ['face', 'document']
